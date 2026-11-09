@@ -22,7 +22,7 @@
     "assets/fam-vornicu-gallery-05.jpeg",
     "assets/fam-vornicu-gallery-06.jpeg"
   ],
-  "rsvp": { "kicker": "VĂ RUGĂM SĂ CONFIRMAȚI", "title": "Ne-ar face<br /><em>mare plăcere.</em>", "note": "Vă rugăm să ne răspundeți până la data stabilită.", "maxGuests": 6, "menuOptions": ["Normal", "Vegetarian", "Vegan", "Copii"], "appsScriptUrl": "" },
+  "rsvp": { "kicker": "VĂ RUGĂM SĂ CONFIRMAȚI", "title": "Ne-ar face<br /><em>mare plăcere.</em>", "note": "Vă rugăm să ne răspundeți până la data stabilită.", "maxGuests": 6, "menuOptions": ["Normal", "Vegetarian", "Vegan", "Copii"], "appsScriptUrl": "https://script.google.com/macros/s/AKfycbw9-DZ0tA3RYtqk7D63JmeYh9GX2IyuwZnG9_VEvbEYsS9mKuDc49uScyobbJ92Y5_FGQ/exec" },
   "gift": { "kicker": "GÂNDURI BUNE ȘI INIMI APROAPE", "title": "Prezența voastră<br />este <em>darul nostru.</em>", "danceTime": "", "details": "" },
   "footer": { "copyright": "© Design și concept · Cosmin Drilea" },
   "buttons": { "story": { "label": "Cunoaște oamenii dragi", "target": "#oameni" }, "people": { "label": "Vezi programul zilei", "target": "#program" }, "schedule": { "label": "Vezi detaliile locației", "target": "#detalii" }, "countdown": { "label": "Confirmă prezența", "target": "#rsvp" }, "details": { "label": "Vezi fotografiile", "target": "#galerie" }, "gallery": { "label": "Răspunde invitației", "target": "#rsvp" }, "rsvp": { "label": "Vezi cât mai avem de așteptat", "target": "#numaratoare" }, "gift": { "label": "Înapoi la început", "target": "#acasa" } },
