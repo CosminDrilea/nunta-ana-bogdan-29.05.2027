@@ -15,7 +15,12 @@ export function initRsvp(config, invitee = null) {
   const bridgeResponses = new Map();
   if (!isLocalServer && bridge && appsScriptUrl) {
     window.addEventListener('message', event => {
-      if (event.source !== bridge.contentWindow || !event.data) return;
+      const trustedOrigin = event.origin === 'https://script.google.com'
+        || event.origin === 'https://script.googleusercontent.com'
+        || event.origin.endsWith('.script.googleusercontent.com');
+
+      if (!trustedOrigin || !event.data) return;
+
       if (event.data.type === 'rsvp-bridge-ready') {
         bridgeReadyResolve();
       } else if (event.data.type === 'rsvp-result') {
