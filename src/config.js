@@ -1,4 +1,4 @@
-// Deschide o invitație cu ?client=slug; ex. ?client=oana-cosmin.
+// Invitația Anei și a lui Bogdan este configurată ca pagină implicită.
 const params = new URLSearchParams(window.location.search);
 const clientSlug = params.get('client') || 'fam-vornicu';
 if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(clientSlug)) {

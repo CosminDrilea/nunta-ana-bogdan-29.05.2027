@@ -4,6 +4,7 @@
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
 .countdown__placeholder{align-self:center;color:#d2c8ba;font-size:.8rem;line-height:1.8;max-width:300px}
 .guest-message{margin-top:20px;color:var(--accent)}
+.form-honeypot{position:absolute!important;width:1px!important;height:1px!important;padding:0!important;margin:-1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important;border:0!important}
 .menu-total-status{grid-column:1/-1;margin:0;color:#8a5147;font-size:.72rem;line-height:1.5}.menu-total-status:not(.is-error){color:#65745f}
 .calendar-link{grid-column:2;justify-self:start;display:inline-flex;align-items:center;gap:22px;margin-top:-35px;padding:14px 18px;border:1px solid #c8b7a5;color:var(--accent);font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;transition:background .2s,color .2s}.calendar-link:hover{background:var(--accent);color:#fff}
 @media(max-width:850px){.calendar-link{grid-column:1;margin-top:0}}
@@ -165,3 +166,4 @@
 }
 
 .intro.has-background-image .intro__body > h2 { transform: translateY(-7px); }
+.form-honeypot { position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0, 0, 0, 0) !important; white-space: nowrap !important; border: 0 !important; }

@@ -1,0 +1,35 @@
+<!doctype html>
+<html>
+  <head>
+    <base target="_top" />
+    <meta charset="utf-8" />
+  </head>
+  <body>
+    <script>
+      const allowedParentOrigin = 'https://cosmindrilea.github.io';
+      window.addEventListener('message', event => {
+        if (event.origin !== allowedParentOrigin || event.source !== window.parent) return;
+        const message = event.data || {};
+        if (message.type !== 'rsvp-submit' || !message.requestId || !message.payload) return;
+
+        const reply = result => window.parent.postMessage({
+          type: 'rsvp-result',
+          requestId: message.requestId,
+          result
+        }, allowedParentOrigin);
+
+        google.script.run
+          .withSuccessHandler(reply)
+          .withFailureHandler(error => reply({
+            ok: false,
+            sheetSaved: false,
+            emailSent: false,
+            error: error && error.message ? error.message : 'Nu am putut salva confirmarea.'
+          }))
+          .submitRsvpFromBridge(message.payload);
+      });
+
+      window.parent.postMessage({ type: 'rsvp-bridge-ready' }, allowedParentOrigin);
+    </script>
+  </body>
+</html>

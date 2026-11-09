@@ -7,14 +7,58 @@ export function initRsvp(config, invitee = null) {
   const count = form.querySelector('[data-guest-count]');
   const menus = form.querySelector('[data-menu-fields]');
   const status = form.querySelector('[data-form-status]');
+  const bridge = document.querySelector('[data-rsvp-bridge]');
+  const isLocalServer = ['localhost', '127.0.0.1'].includes(location.hostname);
+  const appsScriptUrl = config.rsvp.appsScriptUrl?.trim() || '';
+  let bridgeReadyResolve;
+  const bridgeReady = new Promise(resolve => { bridgeReadyResolve = resolve; });
+  const bridgeResponses = new Map();
+  if (!isLocalServer && bridge && appsScriptUrl) {
+    window.addEventListener('message', event => {
+      if (event.source !== bridge.contentWindow || !event.data) return;
+      if (event.data.type === 'rsvp-bridge-ready') {
+        bridgeReadyResolve();
+      } else if (event.data.type === 'rsvp-result') {
+        bridgeResponses.get(event.data.requestId)?.(event.data.result);
+        bridgeResponses.delete(event.data.requestId);
+      }
+    });
+    bridge.src = appsScriptUrl;
+  }
+  const sendRsvp = async payload => {
+    if (isLocalServer) {
+      const response = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'Nu am putut trimite răspunsul.');
+      return result;
+    }
+    if (!appsScriptUrl || !bridge) throw new Error('Formularul de confirmare nu este conectat încă.');
+    await Promise.race([
+      bridgeReady,
+      new Promise((_, reject) => window.setTimeout(() => reject(new Error('Nu am putut conecta formularul. Încearcă din nou mai târziu.')), 20000))
+    ]);
+    const requestId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    const response = new Promise((resolve, reject) => {
+      const timer = window.setTimeout(() => {
+        bridgeResponses.delete(requestId);
+        reject(new Error('Nu am primit confirmarea salvării. Verifică dacă răspunsul a fost înregistrat înainte să încerci din nou.'));
+      }, 20000);
+      bridgeResponses.set(requestId, result => { window.clearTimeout(timer); resolve(result); });
+    });
+    bridge.contentWindow.postMessage({ type: 'rsvp-submit', requestId, payload }, '*');
+    return response;
+  };
   const localLockKey = `invitation-rsvp:${config.clientId}`;
   const previewLockKey = `invitation-rsvp-preview:${config.clientId}`;
   const isLocalSimulation = new URLSearchParams(location.search).get('preview') === 'rsvp'
     && ['localhost', '127.0.0.1'].includes(location.hostname);
   if (!config.features.personalizedLinks) {
     try {
-      if (localStorage.getItem(isLocalSimulation ? previewLockKey : localLockKey)) {
-        showThankYou(config);
+      const savedState = localStorage.getItem(isLocalSimulation ? previewLockKey : localLockKey);
+      if (savedState) {
+        let emailSent = null;
+        try { emailSent = JSON.parse(savedState).emailSent ?? null; } catch {}
+        showThankYou(config, emailSent);
         return;
       }
     } catch {}
@@ -50,6 +94,7 @@ export function initRsvp(config, invitee = null) {
   count.addEventListener('change', drawMenus);
   form.elements.attending.addEventListener('change', drawMenus);
   drawMenus();
+  const formStartedAt = Date.now();
   form.addEventListener('invalid', event => {
     const field = event.target;
     const messages = { name: 'Te rugăm să completezi numele.', guests: 'Selectează numărul de persoane.', attending: 'Alege dacă participați.' };
@@ -78,7 +123,7 @@ export function initRsvp(config, invitee = null) {
       return;
     }
     const data = new FormData(form);
-    const payload = { clientId: config.clientId, guestToken: new URLSearchParams(location.search).get('guest') || '', name: data.get('name').trim(), guests: Number(data.get('guests')), attending: data.get('attending') === 'yes', menus: [], dietary: data.get('dietary')?.trim() || '', message: data.get('message').trim() };
+    const payload = { clientId: config.clientId, guestToken: new URLSearchParams(location.search).get('guest') || '', name: data.get('name').trim(), guests: Number(data.get('guests')), attending: data.get('attending') === 'yes', menus: [], dietary: data.get('dietary')?.trim() || '', message: data.get('message').trim(), website: data.get('website') || '', formStartedAt };
     if (payload.attending && config.features.menuCounts) {
       config.rsvp.menuOptions.forEach((option, index) => {
         const quantity = Number(data.get(`menu_count_${index}`)) || 0;
@@ -87,20 +132,20 @@ export function initRsvp(config, invitee = null) {
     }
     const button = form.querySelector('button[type="submit"]'); button.disabled = true; status.textContent = 'Se trimite…';
     try {
-      const response = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error || 'Nu am putut trimite răspunsul.');
-      if (result.sheetStatus !== 'sent') {
+      const result = await sendRsvp(payload);
+      if (!result.ok) throw new Error(result.error || 'Nu am putut trimite răspunsul.');
+      if (result.sheetSaved !== true && result.sheetStatus !== 'sent') {
         throw new Error(result.error || 'Confirmarea nu a fost salvată în Google Sheets. Încearcă din nou.');
       }
-      status.textContent = result.emailStatus === 'sent'
+      const emailSent = result.emailSent === true || result.emailStatus === 'sent';
+      status.textContent = emailSent
         ? 'Confirmarea a fost trimisă. Vă mulțumim pentru răspunsul vostru.'
         : 'Răspunsul a fost înregistrat, dar notificarea către miri nu a putut fi trimisă.';
       if (config.features.personalizedLinks) {
-        showThankYou(config);
+        showThankYou(config, emailSent);
       } else {
-        try { localStorage.setItem(localLockKey, 'submitted'); } catch {}
-        showThankYou(config);
+        try { localStorage.setItem(localLockKey, JSON.stringify({ submitted: true, emailSent })); } catch {}
+        showThankYou(config, emailSent);
       }
     } catch (error) {
       status.textContent = error instanceof TypeError
