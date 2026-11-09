@@ -1,0 +1,7 @@
+node_modules/
+.env
+data/rsvps.json
+data/invitees/
+data/integrations.json
+.DS_Store
+.git-storage/

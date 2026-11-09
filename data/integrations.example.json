@@ -1,0 +1,7 @@
+{
+  "template": {
+    "url": "https://script.google.com/macros/s/ID_DISTRIBUIRE/exec",
+    "secret": "ACELAȘI_SECRET_CA_ÎN_CODE_GS",
+    "notificationEmails": ["mireasa@example.com", "mirele@example.com"]
+  }
+}

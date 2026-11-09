@@ -1,0 +1,31 @@
+{
+  "clientId": "fam-vornicu",
+  "couple": { "firstNameA": "Ana", "firstNameB": "Bogdan", "initialA": "A", "initialB": "B" },
+  "event": { "date": "2027-05-29T00:00:00+03:00", "dateLabel": "29 mai 2027", "rsvpDeadline": "data stabilită", "pageTitle": "Ana & Bogdan — Invitație de nuntă" },
+  "theme": { "background": "#f8f5ef", "ink": "#26241f", "accent": "#a86f59", "heroImage": "/assets/fam-vornicu-hero.jpeg", "heroPosition": "center 72%", "fonts": { "body": "DM Sans", "display": "Playfair Display" }, "sectionBackgrounds": { "story": "#f8f5ef", "people": "#eee9e0", "schedule": "#f8f5ef", "countdown": "#30322d", "details": "#eee9e0", "gallery": "#f8f5ef", "rsvp": "#eae5dc", "gift": "#f8f5ef" }, "sectionImages": { "story": "/assets/fam-vornicu-story.jpeg", "people": "", "schedule": "/assets/fam-vornicu-schedule.jpeg", "countdown": "", "details": "", "gallery": "", "rsvp": "", "gift": "/assets/fam-vornicu-gift.jpeg" }, "sectionImageOverlays": { "story": "rgba(248,245,239,.48)", "schedule": "rgba(248,245,239,.52)", "gift": "rgba(248,245,239,.48)" } },
+  "features": { "story": true, "people": true, "schedule": true, "countdown": true, "maps": true, "gallery": true, "rsvp": true, "menuCounts": true, "dietaryNeeds": true, "details": true, "share": true, "personalizedLinks": false, "gift": true, "music": true, "calendar": true },
+  "hero": { "eyebrow": "CU BUCURIE VĂ INVITĂM", "sideNote": "O ZI · O POVESTE · ÎMPREUNĂ" },
+  "story": { "kicker": "NE CĂSĂTORIM", "title": "Unele povești<br />devin <em>acasă.</em>", "body": "Ne bucurăm să vă invităm să luați parte la începutul unui nou capitol din povestea noastră. Vă așteptăm cu drag să sărbătorim împreună." },
+  "people": { "parentsLabel": "PĂRINȚII NOȘTRI", "parents": "Numele părinților miresei<br />Numele părinților mirelui", "witnessesLabel": "NAȘII NOȘTRI", "witnesses": "Francisca și Andrei Palade" },
+  "events": [
+    { "time": "De stabilit", "title": "Ceremonia", "venue": "Locația va fi completată", "address": "", "mapUrl": "" },
+    { "time": "De stabilit", "title": "Petrecerea", "venue": "Locația va fi completată", "address": "", "mapUrl": "" }
+  ],
+  "schedule": { "kicker": "29 MAI 2027", "title": "Ne vedem<br /><em>la sărbătoare.</em>" },
+  "details": { "dressCode": "Ținută elegantă", "parking": "Detaliile vor fi completate", "accommodation": "Recomandările vor fi completate", "brideName": "Ana · Mireasa", "bridePhone": "", "groomName": "Bogdan · Mirele", "groomPhone": "0755792159" },
+  "countdown": { "kicker": "NUMĂRĂM ZILELE", "title": "Până la<br /><em>„Da”.</em>" },
+  "gallery": [
+    "/assets/fam-vornicu-gallery-01.jpeg",
+    "/assets/fam-vornicu-gallery-02.jpeg",
+    "/assets/fam-vornicu-gallery-03.jpeg",
+    "/assets/fam-vornicu-gallery-04.jpeg",
+    "/assets/fam-vornicu-gallery-05.jpeg",
+    "/assets/fam-vornicu-gallery-06.jpeg"
+  ],
+  "rsvp": { "kicker": "VĂ RUGĂM SĂ CONFIRMAȚI", "title": "Ne-ar face<br /><em>mare plăcere.</em>", "note": "Vă rugăm să ne răspundeți până la data stabilită.", "maxGuests": 6, "menuOptions": ["Normal", "Vegetarian", "Vegan", "Copii"] },
+  "gift": { "kicker": "GÂNDURI BUNE ȘI INIMI APROAPE", "title": "Prezența voastră<br />este <em>darul nostru.</em>", "danceTime": "", "details": "" },
+  "footer": { "copyright": "© Design și concept · Cosmin Drilea" },
+  "buttons": { "story": { "label": "Cunoaște oamenii dragi", "target": "#oameni" }, "people": { "label": "Vezi programul zilei", "target": "#program" }, "schedule": { "label": "Vezi detaliile locației", "target": "#detalii" }, "countdown": { "label": "Confirmă prezența", "target": "#rsvp" }, "details": { "label": "Vezi fotografiile", "target": "#galerie" }, "gallery": { "label": "Răspunde invitației", "target": "#rsvp" }, "rsvp": { "label": "Vezi cât mai avem de așteptat", "target": "#numaratoare" }, "gift": { "label": "Înapoi la început", "target": "#acasa" } },
+  "music": { "src": "/assets/fam-vornicu-romantic-piano.mp3", "label": "Pornește muzica", "credit": "Romantic Piano — leberch, Pixabay (Pixabay Content License)" }
+}
+

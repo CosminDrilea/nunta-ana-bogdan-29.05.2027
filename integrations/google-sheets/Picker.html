@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <script>
+      let pickerConfig;
+      let pickerLoaded = false;
+
+      function showError(message) {
+        document.getElementById('status').textContent = message;
+      }
+
+      function loadPicker() {
+        if (pickerLoaded) return;
+        pickerLoaded = true;
+        gapi.load('picker', { callback: createPicker });
+      }
+
+      function createPicker() {
+        if (!pickerConfig) return;
+        const view = new google.picker.DocsView(google.picker.ViewId.SPREADSHEETS)
+          .setIncludeFolders(false)
+          .setSelectFolderEnabled(false);
+        const picker = new google.picker.PickerBuilder()
+          .addView(view)
+          .setOAuthToken(pickerConfig.token)
+          .setDeveloperKey(pickerConfig.apiKey)
+          .setAppId(pickerConfig.appId)
+          .setOrigin(google.script.host.origin)
+          .setCallback(onPicked)
+          .build();
+        picker.setVisible(true);
+      }
+
+      function onPicked(result) {
+        if (result.action === google.picker.Action.PICKED) {
+          const picked = result.docs && result.docs[0];
+          if (!picked || picked.id !== pickerConfig.expectedId) {
+            showError('Selectează foaia Ana&Bogdan 29.05.2027.');
+            return;
+          }
+          showError('Verific foaia selectată…');
+          google.script.run
+            .withSuccessHandler(file => {
+              showError('Foaia „' + file.name + '” este configurată pentru RSVP. Poți închide această fereastră.');
+            })
+            .withFailureHandler(error => showError(error.message || 'Nu am putut configura foaia.'))
+            .saveTargetSpreadsheet(picked.id);
+        } else if (result.action === google.picker.Action.CANCEL) {
+          showError('Selectarea a fost anulată.');
+        }
+      }
+
+      function init() {
+        google.script.run
+          .withSuccessHandler(config => {
+            pickerConfig = config;
+            loadPicker();
+          })
+          .withFailureHandler(error => showError(error.message || 'Nu am putut inițializa selectorul Google.'))
+          .getPickerConfig();
+      }
+    </script>
+    <script src="https://apis.google.com/js/api.js?onload=init"></script>
+    <style>
+      body { font: 15px Arial, sans-serif; color: #29251f; padding: 18px; }
+      #status { line-height: 1.5; }
+    </style>
+  </head>
+  <body>
+    <p id="status">Se încarcă selectorul de foi Google…</p>
+  </body>
+</html>
