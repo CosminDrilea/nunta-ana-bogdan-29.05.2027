@@ -14,6 +14,7 @@ export function initRsvp(config, invitee = null) {
   const bridgeReady = new Promise(resolve => { bridgeReadyResolve = resolve; });
   const bridgeResponses = new Map();
   if (!isLocalServer && bridge && appsScriptUrl) {
+    bridge.addEventListener('load', bridgeReadyResolve);
     window.addEventListener('message', event => {
       const trustedOrigin = event.origin === 'https://script.google.com'
         || event.origin === 'https://script.googleusercontent.com'
