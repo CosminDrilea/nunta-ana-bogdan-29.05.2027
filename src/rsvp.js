@@ -13,7 +13,7 @@ export function initRsvp(config, invitee = null) {
   const bridgeResponses = new Map();
 
   if (!isLocalServer && bridge && appsScriptUrl) {
-    bridge.name = `rsvp-bridge-${config.clientId}`;
+    
 
     window.addEventListener('message', event => {
       const trustedOrigin = event.origin === 'https://script.google.com'
@@ -61,7 +61,7 @@ export function initRsvp(config, invitee = null) {
     const postForm = document.createElement('form');
     postForm.method = 'POST';
     postForm.action = appsScriptUrl;
-    postForm.target = bridge.name;
+    postForm.target = 'rsvpBridge';
     postForm.hidden = true;
 
     for (const [name, value] of Object.entries({
