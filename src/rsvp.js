@@ -10,48 +10,75 @@ export function initRsvp(config, invitee = null) {
   const bridge = document.querySelector('[data-rsvp-bridge]');
   const isLocalServer = ['localhost', '127.0.0.1'].includes(location.hostname);
   const appsScriptUrl = config.rsvp.appsScriptUrl?.trim() || '';
-  let bridgeReadyResolve;
-  const bridgeReady = new Promise(resolve => { bridgeReadyResolve = resolve; });
   const bridgeResponses = new Map();
+
   if (!isLocalServer && bridge && appsScriptUrl) {
-    bridge.addEventListener('load', bridgeReadyResolve);
+    bridge.name = `rsvp-bridge-${config.clientId}`;
+
     window.addEventListener('message', event => {
       const trustedOrigin = event.origin === 'https://script.google.com'
-        || event.origin === 'https://script.googleusercontent.com'
-        || event.origin.endsWith('.script.googleusercontent.com');
+        || event.origin.endsWith('script.googleusercontent.com');
 
       if (!trustedOrigin || !event.data) return;
 
-      if (event.data.type === 'rsvp-bridge-ready') {
-        bridgeReadyResolve();
-      } else if (event.data.type === 'rsvp-result') {
+      if (event.data.type === 'rsvp-result') {
         bridgeResponses.get(event.data.requestId)?.(event.data.result);
         bridgeResponses.delete(event.data.requestId);
       }
     });
+
     bridge.src = appsScriptUrl;
   }
   const sendRsvp = async payload => {
     if (isLocalServer) {
-      const response = await fetch('/api/rsvp', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+      const response = await fetch('/api/rsvp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
       const result = await response.json();
       if (!response.ok) throw new Error(result.error || 'Nu am putut trimite răspunsul.');
       return result;
     }
-    if (!appsScriptUrl || !bridge) throw new Error('Formularul de confirmare nu este conectat încă.');
-    await Promise.race([
-      bridgeReady,
-      new Promise((_, reject) => window.setTimeout(() => reject(new Error('Nu am putut conecta formularul. Încearcă din nou mai târziu.')), 20000))
-    ]);
+
+    if (!appsScriptUrl || !bridge) {
+      throw new Error('Formularul de confirmare nu este conectat încă.');
+    }
+
     const requestId = `${Date.now()}-${Math.random().toString(16).slice(2)}`;
     const response = new Promise((resolve, reject) => {
       const timer = window.setTimeout(() => {
         bridgeResponses.delete(requestId);
         reject(new Error('Nu am primit confirmarea salvării. Verifică dacă răspunsul a fost înregistrat înainte să încerci din nou.'));
       }, 20000);
-      bridgeResponses.set(requestId, result => { window.clearTimeout(timer); resolve(result); });
+
+      bridgeResponses.set(requestId, result => {
+        window.clearTimeout(timer);
+        resolve(result);
+      });
     });
-    bridge.contentWindow.postMessage({ type: 'rsvp-submit', requestId, payload }, '*');
+
+    const postForm = document.createElement('form');
+    postForm.method = 'POST';
+    postForm.action = appsScriptUrl;
+    postForm.target = bridge.name;
+    postForm.hidden = true;
+
+    for (const [name, value] of Object.entries({
+      requestId,
+      rsvpPayload: JSON.stringify(payload)
+    })) {
+      const field = document.createElement('input');
+      field.type = 'hidden';
+      field.name = name;
+      field.value = value;
+      postForm.append(field);
+    }
+
+    document.body.append(postForm);
+    postForm.submit();
+    postForm.remove();
+
     return response;
   };
   const localLockKey = `invitation-rsvp:${config.clientId}`;
